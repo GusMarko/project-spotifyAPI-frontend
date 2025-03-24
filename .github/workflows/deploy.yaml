@@ -31,9 +31,9 @@ jobs:
 
             - name: Set Bucket Name
               run: |
-                if [[  "${{ github.base_ref }}" == "refs/heads/main" ]]; then
+                if [[  "${{ github.base_ref }}" == "main" ]]; then
                   echo "bucket_name=project-s-website-files-bucket-main" >> $GITHUB_ENV
-                elif [[ "${{ github.base_ref }}" == "refs/heads/dev" ]]; then
+                elif [[ "${{ github.base_ref }}" == "dev" ]]; then
                   echo "bucket_name=project-s-website-files-bucket-dev" >> $GITHUB_ENV
                 else 
                    echo "bucket_name=project-s-website-files-bucket-dev>> $GITHUB_ENV
