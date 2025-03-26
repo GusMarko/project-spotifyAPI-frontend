@@ -11,7 +11,7 @@ function searchArtist() {
     console.log("Data type selected:", dataType); // Log selected data type
   
     // Structure of API URL with query strings
-    const apiUrl = `artistsearch-dev.gusmarko.com/dev/search?artist=${artistName}&type=${dataType}`;
+    const apiUrl = `https://artistsearch-dev.gusmarko.com/dev/search?artist=${artistName}&type=${dataType}`;
     console.log("Constructed API URL:", apiUrl); // Log constructed API URL
   
     // Making request to API Gateway (fetch) that triggers Lambda function
