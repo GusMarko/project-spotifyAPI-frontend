@@ -45,3 +45,14 @@ jobs:
               run: |
                 aws s3 cp ./ s3://${{ env.bucket_name }}/ --recursive --exclude ".github/*" --exclude ".git/*"
 
+            - name: Invalidate CloudFront Cache
+              run: |
+                if [[ "${{ github.base_ref }}" == "main" ]]; then
+                  aws cloudfront create-invalidation \
+                  --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_MAIN }} \
+                  --paths '/*'
+                elif [[ "${{ github.base_ref }}" == "dev" ]]; then
+                  aws cloudfront create-invalidation \
+                  --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} \
+                  --paths '/*'
+                fi

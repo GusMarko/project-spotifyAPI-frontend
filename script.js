@@ -11,7 +11,7 @@ function searchArtist() {
     console.log("Data type selected:", dataType); // Log selected data type
   
     // Structure of API URL with query strings
-    const apiUrl = `https://j6klhmhgp5.execute-api.eu-central-1.amazonaws.com/dev/search?artist=${artistName}&type=${dataType}`;
+    const apiUrl = `https://t6txqs2ik5.execute-api.eu-central-1.amazonaws.com/dev/search?artist=${artistName}&type=${dataType}`;
     console.log("Constructed API URL:", apiUrl); // Log constructed API URL
   
     // Making request to API Gateway (fetch) that triggers Lambda function
@@ -56,5 +56,5 @@ function searchArtist() {
         console.error("Error occurred during fetch or processing data:", error); 
         outputContainer.innerHTML = `<p>Error fetching data. Please try again later.</p>`;
       });
-  }
-  
+    }
+
