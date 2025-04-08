@@ -1,0 +1,58 @@
+name: "Deploy Objects to S3 Bucket"
+
+
+on:
+    pull_request:
+        branches:
+            - main
+            - dev
+
+env:
+    AWS_REGION: ${{ secrets.AWS_REGION }}
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+jobs:
+    uploadObjects:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Configure AWS Credentials
+              uses: aws-actions/configure-aws-credentials@v3
+              with:
+                aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+                aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+                aws-region: ${{ env.AWS_REGION }}
+
+
+            - name: Set Bucket Name
+              run: |
+                if [[ "${{ github.base_ref }}" == "main" ]]; then
+                  echo "bucket_name=project-s-website-files-bucket-main" >> $GITHUB_ENV
+                elif [[ "${{ github.base_ref }}" == "dev" ]]; then
+                  echo "bucket_name=project-s-website-files-bucket-dev" >> $GITHUB_ENV
+                fi 
+
+            - name: Delete old S3 objects
+              run: |
+                aws s3 rm s3://${{ env.bucket_name }}/ --recursive
+
+            - name: Upload new S3 objects
+              run: |
+                aws s3 cp ./ s3://${{ env.bucket_name }}/ --recursive --exclude ".github/*" --exclude ".git/*"
+
+            - name: Invalidate CloudFront Cache
+              run: |
+                if [[ "${{ github.base_ref }}" == "main" ]]; then
+                  aws cloudfront create-invalidation \
+                  --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_MAIN }} \
+                  --paths '/*'
+                elif [[ "${{ github.base_ref }}" == "dev" ]]; then
+                  aws cloudfront create-invalidation \
+                  --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID_DEV }} \
+                  --paths '/*'
+                fi
