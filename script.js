@@ -30,7 +30,8 @@ function searchArtist() {
         outputContainer.innerHTML = ""; 
 
         if (data.suggestions && Array.isArray(data.suggestions) && data.suggestions.length > 0) {
-          let suggestionsHTML = `<h2>No exact match found for "${artistName}". Did you mean?</h2><ul class="no-bullets">`;
+          let suggestionsHTML = `<h2>No exact match found for "${artistName}".</h2>`;
+          suggestionsHTML += `<h3>Did you mean?</h3><ul class="no-bullets">`;
           data.suggestions.forEach(suggestion => {
             suggestionsHTML += `<li>${suggestion}</li>`; // we make list of suggestions of artists with similar names
         })
