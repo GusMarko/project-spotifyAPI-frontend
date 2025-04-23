@@ -1,39 +1,47 @@
 // Event listener for "search" button click
 function searchArtist() {
-    console.log("Search button clicked."); // Track button click
+    console.log("Search button clicked."); 
   
     // Store user input for artist name
     const artistName = document.getElementById("artistInput").value;
-    console.log("Artist name entered:", artistName); // Log entered artist name
+    console.log("Artist name entered:", artistName); 
   
     // Store selected option of data type
     const dataType = document.getElementById("dataSelect").value;
-    console.log("Data type selected:", dataType); // Log selected data type
+    console.log("Data type selected:", dataType); 
   
     // Structure of API URL with query strings
-    const apiUrl = `https://8ziq5cvnfl.execute-api.eu-central-1.amazonaws.com/main/search?artist=${artistName}&type=${dataType}`;
-    console.log("Constructed API URL:", apiUrl); // Log constructed API URL
+    const apiUrl = `https://8l930ful23.execute-api.eu-central-1.amazonaws.com/main/search?artist=${artistName}&type=${dataType}`;
+    console.log("Constructed API URL:", apiUrl); 
   
     // Making request to API Gateway (fetch) that triggers Lambda function
     fetch(apiUrl)
       .then((response) => {
-        console.log("Received response from API Gateway:", response); // Log raw response object
+        console.log("Received response from API Gateway:", response); 
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`); // Log HTTP error codes
+          throw new Error(`HTTP error! Status: ${response.status}`); 
         }
-        return response.json(); // Converting response to JSON
+        return response.json();
       })
       .then((data) => {
-        console.log("Data received from API:", data); // Log data received from API
-        console.log(data.data)
-        console.log(data.artist)
+        console.log("Data received from API:", data); 
         
         const outputContainer = document.getElementById("output");
-        outputContainer.innerHTML = ""; // Clear output from last API call
+        outputContainer.innerHTML = ""; 
 
-        const option = data.type;
-        const responseArtist = data.artist;
-        let result = data.data; 
+        if (data.suggestions && Array.isArray(data.suggestions) && data.suggestions.length > 0) {
+          let suggestionsHTML = `<h2>No exact match found for "${artistName}".</h2>`;
+          suggestionsHTML += `<h3>Did you mean:</h3><ul class="no-bullets">`;
+          data.suggestions.forEach(suggestion => {
+            suggestionsHTML += `<li>${suggestion}</li>`; // we make list of suggestions of artists with similar names
+        })
+          suggestionsHTML += `</ul><p>Please try searching again with a suggested name.</p>`;
+          outputContainer.innerHTML = suggestionsHTML;
+        
+        } else if (data.artist && data.data) {
+          const option = data.type;
+          const responseArtist = data.artist;
+          let result = data.data; 
         
         let htmlContent = ""
         if (option === "topSongs") {
@@ -51,7 +59,8 @@ function searchArtist() {
             htmlContent += `<p>${result}</p>`;
         }
         outputContainer.innerHTML = htmlContent;
-      })
+      }})
+    
       .catch((error) => {
         console.error("Error occurred during fetch or processing data:", error); 
         outputContainer.innerHTML = `<p>Error fetching data. Please try again later.</p>`;
