@@ -11,7 +11,7 @@ function searchArtist() {
     console.log("Data type selected:", dataType); 
   
     // Structure of API URL with query strings
-    const apiUrl = `https://pjxgjzt5vf.execute-api.eu-central-1.amazonaws.com/main/search?artist=${artistName}&type=${dataType}`;
+    const apiUrl = `https://8l930ful23.execute-api.eu-central-1.amazonaws.com/main/search?artist=${artistName}&type=${dataType}`;
     console.log("Constructed API URL:", apiUrl); 
   
     // Making request to API Gateway (fetch) that triggers Lambda function
